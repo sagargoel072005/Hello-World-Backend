@@ -25,14 +25,25 @@ const userSchema = new mongoose.Schema({
             }
         },
     },
-    password: {
+password: {
+    type: String,
+    required: function () {
+      return this.authProvider === "local";
+    },
+    validate(value) {
+      // Google login ke liye skip
+      if (this.authProvider === "google") return true;
+
+      // Local login ke liye check
+      if (!validator.isStrongPassword(value)) {
+        throw new Error("Invalid Password :" + value);
+      }
+    },
+  },
+    authProvider: {
         type: String,
-        required: true,
-        validate(value) {
-            if (!validator.isStrongPassword(value)) {
-                throw new Error("Enter a strong password : " + value);
-            }
-        }
+        enum: ["local", "google"],
+        default: "local",
     },
     profilePhoto: {
         type: String,
@@ -77,6 +88,15 @@ const userSchema = new mongoose.Schema({
     },
 
     leetcodeId: {
+        type: String,
+        default: "",
+    },
+        TwitterId: {
+        type: String,
+        default: "",
+    },
+
+    PortFolio: {
         type: String,
         default: "",
     },
@@ -139,18 +159,18 @@ const userSchema = new mongoose.Schema({
 );
 
 //compound index - verify fields exists in schema before using index
-userSchema.index({fromUserId:1,toUserId:1});
+userSchema.index({ fromUserId: 1, toUserId: 1 });
 
 // JWT token generation method
 userSchema.methods.getJWT = async function () {
-  const user = this;
-  const token = await jwt.sign({ _id: user._id }, process.env.JWT_TOKEN, {
-    expiresIn: "1d",
-  });
-  return token;
+    const user = this;
+    const token = await jwt.sign({ _id: user._id }, process.env.JWT_TOKEN, {
+        expiresIn: "1d",
+    });
+    return token;
 };
 
-const userModel = mongoose.model("user",userSchema);
+const userModel = mongoose.model("user", userSchema);
 module.exports = userModel;
 
 
