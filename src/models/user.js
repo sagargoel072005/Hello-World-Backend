@@ -103,6 +103,14 @@ const userSchema = new mongoose.Schema(
                 message: "Maximum 20 experience entries allowed.",
             },
         },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+
+    membershipType: {
+      type: String,
+    },
 
         // ── Projects ────────────────────────────
         projects: {

@@ -34,6 +34,7 @@ const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
 const PostRouter = require("./routes/post");
 const chatRouter = require("./routes/chat");
+const paymentRouter = require("./routes/payment");
 const initializeSocket = require("./utils/socket");
 
 
@@ -47,6 +48,7 @@ app.use("/", userRouter);
 app.use("/", googleAuthRouter);
 app.use("/", PostRouter);
 app.use("/", chatRouter);
+app.use("/", paymentRouter);
 
 const server = http.createServer(app);
 initializeSocket(server);
