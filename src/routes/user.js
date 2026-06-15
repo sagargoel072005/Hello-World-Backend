@@ -80,4 +80,3 @@ const skip = (page-1)*limit;
 });
 
 module.exports = userRouter;
- 

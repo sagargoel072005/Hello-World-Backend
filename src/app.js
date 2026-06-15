@@ -7,12 +7,12 @@ const ConnectionRequestModel = require('./models/connectionRequest');
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("./config/passport");
-
+const http = require("http");
 const app = express();
+
 app.use(
   cors({
-    // origin: "http://localhost:5173",
-    origin: true,
+   origin: "http://localhost:5173",
     credentials: true,
   })
 );
@@ -32,6 +32,9 @@ const googleAuthRouter = require("./routes/googleAuth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const PostRouter = require("./routes/post");
+const chatRouter = require("./routes/chat");
+const initializeSocket = require("./utils/socket");
 
 
 app.use(passport.initialize());
@@ -42,12 +45,17 @@ app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
 app.use("/", googleAuthRouter);
+app.use("/", PostRouter);
+app.use("/", chatRouter);
+
+const server = http.createServer(app);
+initializeSocket(server);
 
 connectDB()
   .then(() => {
     console.log("database connection established...");
 
-    app.listen(process.env.PORT, "0.0.0.0",() => {
+    server.listen(process.env.PORT, "0.0.0.0",() => {
       console.log("our server is running on the port successfully");
     });
   }).catch((err) => {
