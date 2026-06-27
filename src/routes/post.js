@@ -1,5 +1,5 @@
 const express = require("express");
-const Post = require("../models/Post");
+const Post = require("../models/post");
 const chatUpload = require("../middlewares/chatUpload");
 const cloudinary = require("../config/cloudinary");
 

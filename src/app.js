@@ -10,12 +10,18 @@ const passport = require("./config/passport");
 const http = require("http");
 const app = express();
 
-app.use(
-  cors({
-   origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://connectra.shop",
+    "https://www.connectra.shop"
+  ],
+  credentials: true,
+}));
+
+// IMPORTANT: webhook route ko raw body chahiye signature verify karne ke liye,
+// isliye ye express.json() SE PEHLE aana zaroori hai, sirf isi specific path ke liye.
+app.use("/payment/webhook", express.raw({ type: "application/json" }));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -35,6 +41,7 @@ const userRouter = require("./routes/user");
 const PostRouter = require("./routes/post");
 const chatRouter = require("./routes/chat");
 const paymentRouter = require("./routes/payment");
+const resumeRouter = require("./routes/resume");
 const initializeSocket = require("./utils/socket");
 
 
@@ -49,6 +56,8 @@ app.use("/", googleAuthRouter);
 app.use("/", PostRouter);
 app.use("/", chatRouter);
 app.use("/", paymentRouter);
+app.use("/api", require("./routes/news"));
+app.use("/", resumeRouter);
 
 const server = http.createServer(app);
 initializeSocket(server);

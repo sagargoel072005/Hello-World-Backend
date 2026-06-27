@@ -223,4 +223,3 @@ profileRouter.get("/me", userAuth, getMyProfile);
 profileRouter.get("/profile/:userId/",userAuth,getUserProfile);
 
 module.exports = profileRouter;
-

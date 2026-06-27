@@ -46,12 +46,44 @@ userRouter.get("/user/connections",userAuth,async(req,res)=>{
     }
 });
 
+userRouter.delete("/user/connection/remove/:userId", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const { userId } = req.params;
+
+    const deleted = await ConnectionRequest.findOneAndDelete({
+      $or: [
+        { fromUserId: loggedInUser._id, toUserId: userId, status: "accepted" },
+        { fromUserId: userId, toUserId: loggedInUser._id, status: "accepted" },
+      ],
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Connection not found" });
+    }
+
+    res.json({ message: "Connection removed successfully" });
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+});
+
+userRouter.get('/stats', async (req, res) => {
+  try {
+    const developerCount = await User.countDocuments();
+    res.json({ developers: developerCount });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+});
+
 userRouter.get("/feed/",userAuth,async(req,res)=>{
     try{
+        res.set("Cache-Control", "no-store"); 
         const loggedInUser = req.user;
 const page = parseInt(req.query.page) || 1;
-let limit = parseInt(req.query.limit) || 10;
-limit = limit>50 ? 50 : limit;
+let limit = parseInt(req.query.limit) || 50;
+limit = limit>100 ? 100 : limit;
 const skip = (page-1)*limit;
         const connectionRequests = await ConnectionRequest.find({
                $or: [
