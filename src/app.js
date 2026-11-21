@@ -13,8 +13,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://connectra.shop",
-    "https://www.connectra.shop"
+    "https://appconnectra.netlify.app"
   ],
   credentials: true,
 }));
