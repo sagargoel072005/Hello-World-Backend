@@ -21,7 +21,7 @@ googleAuthRouter.get(
             expires: new Date(Date.now() + 8 * 3600000)
         });
 
-        res.redirect("https://connectra.shop/feed");
+        res.redirect("https://appconnectra.netlify.app/feed");
 
     }
 );
