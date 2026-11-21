@@ -9,6 +9,7 @@ const session = require("express-session");
 const passport = require("./config/passport");
 const http = require("http");
 const app = express();
+app.set("trust proxy", 1);
 
 app.use(cors({
   origin: [
@@ -25,11 +26,15 @@ app.use("/payment/webhook", express.raw({ type: "application/json" }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(
-  session({
-    secret: "secret",
-    resave: false,
-    saveUninitialized: true
-  })
+ session({
+  secret: "secret",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: true,
+    sameSite: "none"
+  }
+})
 );
 
 const authRouter = require("./routes/auth");
